@@ -59,7 +59,7 @@ class CheckSimpleALE(unittest.TestCase):
         self.assertEqual(digest_data(parser.data), '985d69a6f00745a2528f1df6a478d212')
 
     def test_stream(self):
-        from io import StringIO
+        from StringIO import StringIO
         parser = ALEParser()
         stream = StringIO(self.file_text)
         parser.set_source(stream)

@@ -26,9 +26,9 @@
 # Simple ALE Parser based on Avid Log Specification Appendix C
 # - http://www.24p.com/PDF/ALE_Spec.pdf
 try:
-    from io import StringIO
+    from cStringIO import StringIO
 except ImportError:
-    from io import StringIO
+    from StringIO import StringIO
 
 
 class ALEError(Exception): pass
@@ -68,7 +68,7 @@ class ALEParser(object):
             self.data = []
 
     def set_source(self, source, source_name=None):
-        if isinstance(source, str):
+        if isinstance(source, (str, unicode)):
             if '\n' in source or '\r' in source:
                 # Fix newlines...
                 if '\r\n' in source or '\n\r' in source:
@@ -202,7 +202,7 @@ class ALEParser(object):
         if self._line.count('\t') != 1:
             raise self._SyntaxError('Malformed heading section')
 
-        key, value = list(map(str.strip, self._line.split('\t')))
+        key, value = map(str.strip, self._line.split('\t'))
         if key == 'FIELD_DELIM':
             if value != 'TABS':
                 raise self._SyntaxError('Unable to handle non tab delimited ALE files')
@@ -216,11 +216,11 @@ class ALEParser(object):
         if '\t' not in self._line:
             raise self._SyntaxError('Malformed column definition')
 
-        self.columns = list(map(str.strip, self._line.split('\t')))
+        self.columns = map(str.strip, self._line.split('\t'))
 
     def _parse_data(self):
         if self._line.count('\t') != len(self.columns)-1:
             raise self._SyntaxError('Malformed data line')
 
         # Could write this neater, but it works...
-        self.data.append(dict(list(zip(self.columns, list(map(str.strip, self._line.split('\t')))))))
+        self.data.append(dict(zip(self.columns, map(str.strip, self._line.split('\t')))))
